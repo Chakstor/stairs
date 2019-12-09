@@ -8,12 +8,21 @@ class Game {
         this.framesCounter = 0;
 
         this.isGameOver = false;
+
+        this.player = new Player(this.ctx, this.canvasWidth, this.canvasHeight);
     }
 
     init() {
         this.interval = setInterval(() => {
             this.framesCounter++;
+
+            this.drawAll();
+
             this.framesCounter = (this.framesCounter > 1000) ? this.framesCounter = 0 : this.framesCounter;
         }, 1000 / this.fps);
+    }
+
+    drawAll() {
+        this.player.draw(this.framesCounter);
     }
 }
