@@ -1,0 +1,12 @@
+body {
+    margin: 0;
+    padding: 0;
+}
+
+.game-title {
+    background: url(../images/main-logo.png) no-repeat;
+    width: 736px;
+    height: 260px;
+    text-indent: -100%;
+    overflow-x: hidden;
+}
