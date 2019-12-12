@@ -18,6 +18,7 @@ class Game {
 
             this.clearAll();
             this.drawAll();
+            this.moveAll();
 
             this.framesCounter = (this.framesCounter > 1000) ? this.framesCounter = 0 : this.framesCounter;
         }, 1000 / this.fps);
