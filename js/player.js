@@ -28,6 +28,7 @@ class Player {
         this.posXSpeed = 3;
         this.posYSpeed = 3;
         this.climbSpeed = 1.5;
+        this.currentPlatform = 0;
 
         this.directionX = 0;
         this.directionY = 0;
@@ -96,6 +97,16 @@ class Player {
     }
 
     walk() {
+        if (this.posX <= 0) {
+            this.posX = 1;
+            return;
+        }
+
+        if (this.posX + this.width >= this.canvasWidth) {
+            this.posX = this.canvasWidth - this.width - 1;
+            return;
+        }
+
         this.posX += this.posXSpeed * this.directionX;
     }
 

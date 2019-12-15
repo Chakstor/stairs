@@ -25,6 +25,7 @@ class Game {
             this.drawAll();
             this.moveAll();
             this.updatePlayerYBase();
+            this.isOutOfPlatform();
 
             this.player.canClimb = this.isClimbable() ? true : false;
             this.framesCounter = (this.framesCounter > 1000) ? this.framesCounter = 0 : this.framesCounter;
@@ -48,23 +49,37 @@ class Game {
     generatePlaform() {
         this.platforms.push(new Platform(this.ctx, this.canvasWidth, this.canvasHeight, 10, this.canvasHeight - 50))
         this.platforms.push(new Platform(this.ctx, this.canvasWidth - 400, this.canvasHeight, 10, this.canvasHeight - 50 - 90))
+        this.platforms.push(new Platform(this.ctx, this.canvasWidth - 400, this.canvasHeight, 10, this.canvasHeight - 140 - 90))
     }
 
     generateLadder() {
         this.ladders.push(new Ladder(this.ctx, this.canvasWidth, this.canvasHeight, 300, this.canvasHeight - 50, 10))
+        this.ladders.push(new Ladder(this.ctx, this.canvasWidth, this.canvasHeight, 200, this.canvasHeight - 50 - 90, 10))
+    }
+
+    getClosestPlatform() {
+        return this.platforms.filter(platform => {
+            return ((platform.posY + 10) > this.player.posY + this.player.height)
+        }).reverse();
     }
 
     updatePlayerYBase() {
 
-        let closestPlatform = this.platforms.filter(platform => {
-            return ((platform.posY + 1) > this.player.posY + this.player.height)
-        }).reverse()[0];
+        let closestPlatform = this.getClosestPlatform();
 
-        //console.log((closestPlatform && closestPlatform.posY) || this.player.posYBase);
-        //console.log(closestPlatform[0] && closestPlatform[0].posY);
+        if (this.getClosestPlatform().length) {
+            this.player.posYBase = closestPlatform[0].posY - this.player.height;
+            this.player.currentPlatform = closestPlatform[0];
+        }
+    }
 
-        // if (closestPlatform[0] && closestPlatform[0].posY)
-        //     console.log(this.player.posYBase);
+    isOutOfPlatform() {
+
+        let currentPlatform = this.player.currentPlatform;
+
+        if (this.player.posX > currentPlatform.posX + currentPlatform.width) {
+            this.player.posYBase = this.platforms[0].posY - this.player.height;
+        }
     }
 
     isClimbable() {
