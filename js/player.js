@@ -1,16 +1,17 @@
 class Player {
-    constructor(ctx, canvasWidth, canvasHeight) {
+    constructor(ctx, canvasWidth, canvasHeight, posX = 40, posY = 50) {
         this.ctx = ctx;
         this.canvasWidth = canvasWidth;
         this.canvasHeight = canvasHeight;
-
-        this.JUMPDISTANCE = 40;
 
         this.imageWR = new Image();
         this.imageWR.src = "images/mario/walking_right.png";
 
         this.imageWL = new Image();
         this.imageWL.src = "images/mario/walking_left.png";
+
+        this.imageCLIMB = new Image();
+        this.imageCLIMB.src = "images/mario/climbing.png";
 
         this.imageJUMP = new Image();
         this.imageJUMP.src = "images/mario/jumping_right.png";
@@ -20,107 +21,39 @@ class Player {
 
         this.width = 90 / this.frames;
         this.height = 32;
-        this.posX = 40;
-        this.posY = 50;
-        this.posYBase = 50;
+        this.posX = posX;
+        this.posY = posY - this.height;
+
+        this.posYBase = this.posY;
         this.posXSpeed = 3;
-        this.posYSpeed = .3;
-        this.landingPos = 0;
-        this.gravity = .4;
+        this.posYSpeed = 3;
+        this.climbSpeed = 1.5;
 
-        this.lastAction = 'RIGHT';
-        this.actions = {
-            RIGHT: false,
-            LEFT: false,
-            JUMP: false,
-            JUMPRIGHT: false,
-            JUMPLEFT: false
-        };
+        this.directionX = 0;
+        this.directionY = 0;
+        this.jumpMaxHeight = this.posYBase - 50;
 
-        this.keysPressed = [];
-        this.keys = {
-            UP: 38,
-            RIGHT: 39,
-            DOWN: 40,
-            LEFT: 37,
-            JUMP: 65, // a
-        };
+        // Player actions
+        this.canJump = true;
+        this.canWalk = true;
+        this.canClimb = false;
+        this.isClimbing = false;
 
         this.onKeyDown = function(event) {
-
-            if (this.isJumping()) return;
-
-            this.keysPressed[event.keyCode] = true;
-
-            console.log(Object.keys(this.keysPressed));
-
-            // if ( this.keysPressed[39] && this.keysPressed[65] ) {
-            //     this.landingPos = this.posX + this.JUMPDISTANCE;
-
-            //     if (this.posY >= this.posYBase) {
-            //         this.posY -= this.posYSpeed;
-            //         this.posYSpeed -= 5;
-
-            //         this.posX += 1.5;
-            //         this.posXSpeed += .1;
-            //     }
-
-            //     changeAction(this.actions, 'JUMPRIGHT');
-            //     this.lastAction = 'JUMPRIGHT';
-            //     return;
-            // }
-
-            // if (this.keysPressed[37] && this.keysPressed[65]) {
-            //     this.landingPos = this.posX - this.JUMPDISTANCE;
-
-            //     if (this.posY >= this.posYBase) {
-            //         this.posY -= this.posYSpeed;
-            //         this.posYSpeed -= 5;
-
-            //         this.posX -= 1.5;
-            //         this.posXSpeed -= .1;
-            //     }
-
-            //     changeAction(this.actions, 'JUMPLEFT');
-            //     this.lastAction = 'JUMPLEFT';
-            //     return;
-            // }
-
-            let action = Object.entries(this.keys).filter(entry => entry.includes(event.keyCode))[0][0];
-
-            changeAction(this.actions, action);
-            this.lastAction = action;
-
-            switch(event.keyCode) {
-                case this.keys.RIGHT:
-                    this.posX += this.posXSpeed;
+            switch (event.keyCode) {
+                case 37: // left
+                    this.directionX = -1;
                     break;
-                case this.keys.LEFT:
-                    this.posX -= this.posXSpeed;
+                case 39: // right
+                    this.directionX = 1;
                     break;
-                case this.keys.JUMPRIGHT:
-                    this.landingPos = this.posX + this.JUMPDISTANCE;
-
-                    if (this.posY >= this.posYBase) {
-                        this.posY -= this.posYSpeed;
-                        this.posYSpeed -= 5;
-
-                        this.posX += 1.5;
-                        this.posXSpeed += .1;
-                    }
+                case 38:  // up
+                    this.directionY = this.canClimb ? -1 : 0;
                     break;
-                case this.keys.JUMPLEFT:
-                    this.landingPos = this.posX - this.JUMPDISTANCE;
-
-                    if (this.posY >= this.posYBase) {
-                        this.posY -= this.posYSpeed;
-                        this.posYSpeed -= 5;
-
-                        this.posX -= 1.5;
-                        this.posXSpeed -= .1;
-                    }
+                case 40:  // down
+                    this.directionY = this.canClimb ? 1 : 0;
                     break;
-                case this.keys.JUMP:
+                case 65: // a
                     if (this.posY >= this.posYBase) {
                         this.posY -= this.posYSpeed;
                         this.posYSpeed -= 5;
@@ -130,11 +63,8 @@ class Player {
         }
 
         this.onKeyUp = function (event) {
-            this.posX = this.posX;
-            this.actions.RIGHT = false;
-            this.actions.LEFT = false;
-
-            this.keysPressed = [];
+            this.directionX = 0;
+            this.directionY = 0;
         }
 
         this.keyDownHandler = this.onKeyDown.bind(this);
@@ -143,77 +73,45 @@ class Player {
         this.setListener();
     }
 
-    isJumping() {
-        return this.posY !== this.posYBase;
-    }
-
-    resetActions(actions) {
-        Object.keys(actions).forEach(key => {
-            actions[key] = false;
-        })
-    }
-
     draw(framesCounter) {
 
-        let lastDirection = '';
+        (this.directionX < 0) ? this.drawImage(this.imageWL) : this.drawImage(this.imageWR);
+        (this.directionY < 0) ? this.drawImage(this.imageCLIMB) : (this.directionY > 0) ? this.drawImage(this.imageCLIMB) : false;
 
-        if (this.lastAction === 'RIGHT') lastDirection = this.imageWR;
-        if (this.lastAction === 'LEFT') lastDirection = this.imageWL;
-        if (this.lastAction.indexOf('JUMP') > -1) lastDirection = this.imageJUMP;
+        if (this.directionX !== 0 && framesCounter % 4 === 0) {
+            this.framesIndex++;
+            this.framesIndex = this.framesIndex > 2 ? 0 : this.framesIndex;
+        }
 
-        this.drawImage(lastDirection);
-        this.animateWalking(framesCounter);
+        if (this.directionY !== 0 && framesCounter % 4 === 0) {
+            this.framesIndex++;
+            this.framesIndex = this.framesIndex > 1 ? 0 : this.framesIndex;
+        }
     }
 
     move() {
+        this.walk();
+        this.jump();
+        this.climb();
+    }
 
-        let action = Object.keys(this.actions).filter(action => this.actions[action])[0];
+    walk() {
+        this.posX += this.posXSpeed * this.directionX;
+    }
 
-        switch (action) {
-            case 'RIGHT':
-                this.drawImage(this.imageWR);
-                break;
-            case 'LEFT':
-                this.drawImage(this.imageWL);
-                break;
-            case 'JUMPRIGHT':
-                this.drawImage(this.imageJUMP);
-                if (this.posY <= this.posYBase) {
-                    this.posY += this.posYSpeed;
-                    this.posYSpeed += this.gravity;
-                    this.posX += 1.5;
-                    this.posXSpeed += .1;
-                } else {
-                    this.posYSpeed = .3;
-                    this.posY = this.posYBase;
-                    this.posX = this.landingPos;
-                    this.posXSpeed = 3;
-                }
-                break;
-            case 'JUMPLEFT':
-                this.drawImage(this.imageJUMP);
-                if (this.posY <= this.posYBase) {
-                    this.posY += this.posYSpeed;
-                    this.posYSpeed += this.gravity;
-                    this.posX -= 1.5;
-                    this.posXSpeed -= .1;
-                } else {
-                    this.posYSpeed = .3;
-                    this.posY = this.posYBase;
-                    this.posX = this.landingPos;
-                    this.posXSpeed = 3;
-                }
-                break;
-            case 'JUMP':
-                this.drawImage(this.imageJUMP);
-                if (this.posY <= this.posYBase) {
-                    this.posY += this.posYSpeed;
-                    this.posYSpeed += this.gravity;
-                } else {
-                    this.posYSpeed = .3;
-                    this.posY = this.posYBase;
-                }
-                break;
+    climb() {
+        this.posY += this.climbSpeed * this.directionY;
+    }
+
+    jump() {
+        if (this.canClimb) return;
+
+        if (this.posY > this.posYBase) {
+            this.posYSpeed = .3;
+            this.posY = this.posYBase;
+        } else {
+            this.posY += this.posYSpeed;
+            this.posYSpeed += .4;
         }
     }
 
@@ -241,13 +139,6 @@ class Player {
         }
     }
 
-    animateWalking(framesCounter) {
-        if ((this.actions.RIGHT || this.actions.LEFT) && framesCounter % 4 === 0) {
-            this.framesIndex++;
-            this.framesIndex = this.framesIndex > 2 ? 0 : this.framesIndex;
-        }
-    }
-
     setListener() {
         document.addEventListener('keydown', this.keyDownHandler);
         document.addEventListener('keyup', this.keyUpHandler);
@@ -257,10 +148,4 @@ class Player {
         document.removeEventListener('keydown', this.keyDownHandler);
         document.removeEventListener('keyup', this.keyUpHandler);
     }
-}
-
-function changeAction(actions, action) {
-    Object.keys(actions).forEach(a => {
-        actions[a] = a === action? true : false;
-    });
 }
