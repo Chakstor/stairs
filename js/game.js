@@ -16,7 +16,9 @@ class Game {
         this.interval = setInterval(() => {
             this.framesCounter++;
 
+            this.clearAll();
             this.drawAll();
+            this.moveAll();
 
             this.framesCounter = (this.framesCounter > 1000) ? this.framesCounter = 0 : this.framesCounter;
         }, 1000 / this.fps);
@@ -24,5 +26,13 @@ class Game {
 
     drawAll() {
         this.player.draw(this.framesCounter);
+    }
+
+    moveAll() {
+        this.player.move();
+    }
+
+    clearAll() {
+        this.ctx.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
     }
 }
