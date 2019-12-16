@@ -7,6 +7,9 @@ class Barrel {
         this.image = new Image();
         this.image.src = "images/enemies/barrel.png";
 
+        this.imageDescending = new Image();
+        this.imageDescending.src = "images/enemies/barrel-descending.png";
+
         this.frames = 4;
         this.framesIndex = 0;
         this.shallDescend = shallDescend;
@@ -29,11 +32,12 @@ class Barrel {
         if (this.isDescending) {
             if (this.posY >= this.LADDERHEIGHT) this.isDescending = false;
             this.posY += this.posYSpeed;
+            this.drawImage(this.imageDescending);
         } else {
             this.posX += this.posXSpeed * this.directionX;
+            this.drawImage(this.image);
         }
 
-        this.drawImage(this.image);
 
         if (framesCounter % 4 === 0) {
             this.framesIndex++;
