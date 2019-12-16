@@ -32,7 +32,7 @@ class Player {
 
         this.directionX = 0;
         this.directionY = 0;
-        this.jumpMaxHeight = this.posYBase - 50;
+        this.jumpMaxHeight = 5.5;
 
         // Player actions
         this.canJump = true;
@@ -54,10 +54,10 @@ class Player {
                 case 40:  // down
                     this.directionY = this.canClimb ? 1 : 0;
                     break;
-                case 65: // a
+                case 32: // space bar
                     if (this.posY >= this.posYBase) {
                         this.posY -= this.posYSpeed;
-                        this.posYSpeed -= 5;
+                        this.posYSpeed -= this.jumpMaxHeight;
                     }
                     break;
             }
