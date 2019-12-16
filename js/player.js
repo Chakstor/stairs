@@ -32,7 +32,7 @@ class Player {
 
         this.directionX = 0;
         this.directionY = 0;
-        this.jumpMaxHeight = 5.5;
+        this.jumpMaxHeight = 6;
 
         // Player actions
         this.canJump = true;
