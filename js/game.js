@@ -15,6 +15,7 @@ class Game {
 
     init() {
         this.generateScenary();
+        this.generateBarrel()
 
         this.interval = setInterval(() => {
 
@@ -25,10 +26,11 @@ class Game {
             this.moveAll();
             this.updatePlayerYBase();
             this.isPlayerOutOfPlatform();
+            this.makeBarrelDescend();
             this.removeBarrels();
 
-            if (this.framesCounter % 25 === 0) this.generateBarrel();
-            if (this.hasCollidedWithBarrel()) this.gameOver();
+            if (this.framesCounter % 100 === 0) this.generateBarrel();
+            if (this.hasPlayerCollidedWithBarrel()) this.gameOver();
 
             this.player.canClimb = this.isLadderClimbable() ? true : false;
             this.framesCounter = (this.framesCounter > 1000) ? this.framesCounter = 0 : this.framesCounter;
@@ -36,8 +38,8 @@ class Game {
     }
 
     drawAll() {
-        this.ladders.forEach(ladder => ladder.draw());
         this.platforms.forEach(platform => platform.draw());
+        this.ladders.forEach(ladder => ladder.draw());
         this.barrels.forEach(barrel => barrel.draw(this.framesCounter));
         this.player.draw(this.framesCounter);
     }
@@ -59,7 +61,7 @@ class Game {
         this.platforms.push(new Platform(this.ctx, this.canvasWidth, this.canvasHeight, 10, this.canvasHeight - 50))
 
         for (let i = 0; i <= platforms; i++) {
-            this.platforms.push(new Platform(this.ctx, this.canvasWidth, this.canvasHeight, 10, this.canvasHeight - (50 + ladderHeight * i) - ladderHeight));
+            this.platforms.push(new Platform(this.ctx, this.canvasWidth, this.canvasHeight, 0, this.canvasHeight - (50 + ladderHeight * i) - ladderHeight));
             this.ladders.push(new Ladder(this.ctx, this.canvasWidth, this.canvasHeight, Math.floor((Math.random() * (this.canvasWidth - ladderWidth)) + 1), this.canvasHeight - (50 + ladderHeight * i), 10));
         }
     }
@@ -67,8 +69,9 @@ class Game {
     generateBarrel() {
         let barrelSpeedX = Math.floor((Math.random() * 3) + 2);
         let randomPlatform = this.getRandomPlatform();
+        let shallBarrelDescend = !Math.round(Math.random());
 
-        this.barrels.push(new Barrel(this.ctx, this.canvasWidth, this.canvasHeight, this.canvasWidth, randomPlatform.posY, -1, barrelSpeedX));
+        this.barrels.push(new Barrel(this.ctx, this.canvasWidth, this.canvasHeight, this.canvasWidth, randomPlatform.posY, -1, shallBarrelDescend, barrelSpeedX));
     }
 
     getRandomPlatform() {
@@ -109,9 +112,31 @@ class Game {
         )
     }
 
-    hasCollidedWithBarrel() {
+    makeBarrelDescend() {
+        let ladders = this.isBarrelOverLadder();
 
-        let marginError = 30;
+        ladders.forEach(barrels => {
+            barrels.forEach(barrel => {
+                if (barrel.shallDescend)
+                    barrel.isDescending = true;
+            })
+        })
+    }
+
+    isBarrelOverLadder() {
+        return this.ladders.map(ladder => (
+            this.barrels.filter(barrel => (
+                barrel.posX + barrel.width/12 > ladder.posX &&
+                ladder.posX + ladder.width/12 > barrel.posX &&
+                barrel.posY + barrel.height > ladder.posY - barrel.height &&
+                (ladder.posY - barrel.height) + ladder.height > barrel.posY
+            ))
+        ));
+    }
+
+    hasPlayerCollidedWithBarrel() {
+
+        let marginError = 0;
 
         return this.barrels.some(barrel => (
             (this.player.posX + marginError) + (this.player.width - marginError) > barrel.posX &&
