@@ -38,6 +38,7 @@ class Player {
         //     }
         // };
 
+        this.isDying = false;
         this.isDead = false;
 
         this.imageWR = new Image();
@@ -52,13 +53,16 @@ class Player {
         this.imageJUMP = new Image();
         this.imageJUMP.src = "images/mario/jumping_right.png";
 
-        this.imageDIE = new Image();
-        this.imageDIE.src = "images/mario/rolling.png";
+        this.imageDYING = new Image();
+        this.imageDYING.src = "images/mario/rolling.png";
 
-        this.frames = this.isDead ? 4 : 3;
+        this.imageDEAD = new Image();
+        this.imageDEAD.src = "images/mario/dead.png";
+
+        this.frames = 3;
         this.framesIndex = 0;
 
-        this.width = (this.isDead ? 128 : 90) / this.frames;
+        this.width = 90 / this.frames;
         this.height = 32;
         this.posX = posX;
         this.posY = posY - this.height;
@@ -67,12 +71,12 @@ class Player {
         this.posXSpeed = 3;
         this.posYSpeed = 3;
         this.climbSpeed = 1.5;
+
         this.currentPlatform = 0;
 
         this.directionX = 0;
         this.directionY = 0;
-        this.jumpMaxHeight = 6;
-        this.points = 0;
+        this.jumpMaxHeight = 5.8;
 
         this.isJumping = false;
         this.barrelJumped = false;
@@ -102,7 +106,7 @@ class Player {
                         this.posY -= this.posYSpeed;
                         this.posYSpeed -= this.jumpMaxHeight;
                         this.isJumping = true;
-                        game.playSound(jumpSound);
+                        this.game.soundPlayer.play(jumpSound);
                     }
                     break;
             }
@@ -126,17 +130,10 @@ class Player {
     }
 
     walk() {
-        if (this.posX <= 0) {
-            this.posX = 1;
-            return;
-        }
-
-        if (this.posX + this.width >= this.canvasWidth) {
-            this.posX = this.canvasWidth - this.width - 1;
-            return;
-        }
-
         this.posX += this.posXSpeed * this.directionX;
+
+        if (this.posX <= 0) this.posX = 1
+        if (this.posX + this.width >= this.canvasWidth) this.posX = this.canvasWidth - this.width - 1;
     }
 
     climb() {
@@ -155,22 +152,38 @@ class Player {
         }
     }
 
+    // hasItem(itemName) {
+    //     return this.items.find(i => i.item.name === itemName);
+    // }
+
     draw(framesCounter) {
 
-        (this.directionX < 0) ? this.drawImage(this.imageWL) : this.drawImage(this.imageWR);
-        (this.directionY < 0) ? this.drawImage(this.imageCLIMB) : (this.directionY > 0) ? this.drawImage(this.imageCLIMB) : false;
+        if (this.isDying) {
+            this.frames = this.isDead ? 1 : 4;
+            this.width = (this.isDead ? 32 : 128) / this.frames;
 
-        if (this.isDead) {
             this.directionX = 0;
             this.directionY = 0;
-            this.drawImage(this.imageDIE);
+
+            this.isDead ? this.drawImage(this.imageDEAD) : this.drawImage(this.imageDYING);
             this.removeListener();
+
+            if (!this.isDead) {
+                setTimeout(() => {
+                    this.isDead = true;
+                }, 2000);
+            }
         }
 
-        if (framesCounter % 10 === 0 && this.isDead) {
+        if (framesCounter % 10 === 0 && this.isDying) {
             this.framesIndex++;
             this.framesIndex = this.framesIndex > 3 ? 0 : this.framesIndex;
         }
+
+        if (this.isDying) return;
+
+        (this.directionX < 0) ? this.drawImage(this.imageWL) : this.drawImage(this.imageWR);
+        (this.directionY < 0) ? this.drawImage(this.imageCLIMB) : (this.directionY > 0) ? this.drawImage(this.imageCLIMB) : false;
 
         if (this.directionX !== 0 && framesCounter % 4 === 0) {
             this.framesIndex++;
@@ -184,7 +197,7 @@ class Player {
     }
 
     drawImage(image) {
-        if (image.src.indexOf('jump') > -1) {
+        if (image.src.indexOf('jump') > -1 || image.src.indexOf('dead') > -1) {
             this.ctx.drawImage(
                 image,
                 this.posX,
