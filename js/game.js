@@ -24,6 +24,15 @@ class Game {
         this.generateScenary(5);
         this.generateBarrel()
 
+        this.playSound(intro);
+
+        intro.addEventListener('ended', () => {
+            this.playSound(theme, true);
+            this.renderLoop();
+        });
+    }
+
+    renderLoop() {
         this.interval = setInterval(() => {
 
             this.framesCounter++;
@@ -172,7 +181,7 @@ class Game {
     hasPlayerJumpedOverABarrel() {
 
         let barrels = this.barrels.some(barrel => (
-            this.player.posX + this.player.width > barrel.posX + barrel.width &&
+            this.player.posX + this.player.width > barrel.posX + barrel.width/2 &&
             barrel.posX > this.player.posX &&
             this.player.posY + this.player.height > barrel.posY - (barrel.height * 2.5) &&
             barrel.posY > this.player.posY + this.player.height
@@ -182,6 +191,7 @@ class Game {
             this.points = 100;
             this.score += this.points;
             this.point = new Point(this.ctx, this.canvasWidth, this.canvasHeight, this.player.posX + this.player.width, this.player.posY + 10, this.points);
+            this.playSound(pointsSound);
         }
     }
 
@@ -201,13 +211,34 @@ class Game {
         });
     }
 
+    playSound(sound, shouldLoop = false) {
+
+        if (!sound.ended)
+            sound.currentTime = 0;
+
+        sound.loop = shouldLoop;
+        sound.play();
+    }
+
+    stopSound(sound) {
+        sound.pause();
+        sound.currentTime = 0;
+    }
+
     playerLose() {
+        this.stopSound(theme);
+        this.playSound(dieSound);
+
         this.isGameOver = true;
         this.player.isDead = true;
+
         clearInterval(this.interval);
     }
 
     playerWin() {
+        this.stopSound(theme);
+        this.playSound(roundClear);
+
         clearInterval(this.interval);
     }
 }

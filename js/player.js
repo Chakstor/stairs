@@ -102,6 +102,7 @@ class Player {
                         this.posY -= this.posYSpeed;
                         this.posYSpeed -= this.jumpMaxHeight;
                         this.isJumping = true;
+                        game.playSound(jumpSound);
                     }
                     break;
             }
