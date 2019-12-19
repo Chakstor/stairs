@@ -8,7 +8,7 @@ class Ladder {
         this.image.src = "images/scenario/ladder.png";
 
         this.width = 23;
-        this.height = height * 9;
+        this.height = height;
         this.posX = posX;
         this.posY = posY - this.height;
     }

@@ -1,8 +1,44 @@
 class Player {
-    constructor(ctx, canvasWidth, canvasHeight, posX = 40, posY = 50) {
+    constructor(ctx, canvasWidth, canvasHeight, posX = 40, posY = 50, game) {
         this.ctx = ctx;
         this.canvasWidth = canvasWidth;
         this.canvasHeight = canvasHeight;
+        this.game = game;
+
+        // this.sprites = {
+        //     'WR': {
+        //         src: "images/mario/walking_right.png",
+        //         width: 90,
+        //         height: 32,
+        //         frameRate: 3
+        //     },
+        //     'WL': {
+        //         src: "images/mario/walking_left.png",
+        //         width: 90,
+        //         height: 32,
+        //         frameRate: 3
+        //     },
+        //     'CLIMB': {
+        //         src: "images/mario/climbing.png",
+        //         width: 90,
+        //         height: 32,
+        //         frameRate: 3
+        //     },
+        //     'JUMP': {
+        //         src: "images/mario/jumping_right.png",
+        //         width: 90,
+        //         height: 32,
+        //         frameRate: 3
+        //     },
+        //     'DIES': {
+        //         src: "images/mario/rolling.png",
+        //         width: 128,
+        //         height: 32,
+        //         frameRate: 4
+        //     }
+        // };
+
+        this.isDead = false;
 
         this.imageWR = new Image();
         this.imageWR.src = "images/mario/walking_right.png";
@@ -16,10 +52,13 @@ class Player {
         this.imageJUMP = new Image();
         this.imageJUMP.src = "images/mario/jumping_right.png";
 
-        this.frames = 3;
+        this.imageDIE = new Image();
+        this.imageDIE.src = "images/mario/rolling.png";
+
+        this.frames = this.isDead ? 4 : 3;
         this.framesIndex = 0;
 
-        this.width = 90 / this.frames;
+        this.width = (this.isDead ? 128 : 90) / this.frames;
         this.height = 32;
         this.posX = posX;
         this.posY = posY - this.height;
@@ -33,6 +72,10 @@ class Player {
         this.directionX = 0;
         this.directionY = 0;
         this.jumpMaxHeight = 6;
+        this.points = 0;
+
+        this.isJumping = false;
+        this.barrelJumped = false;
 
         // Player actions
         this.canJump = true;
@@ -58,6 +101,7 @@ class Player {
                     if (this.posY >= this.posYBase) {
                         this.posY -= this.posYSpeed;
                         this.posYSpeed -= this.jumpMaxHeight;
+                        this.isJumping = true;
                     }
                     break;
             }
@@ -72,22 +116,6 @@ class Player {
         this.keyUpHandler = this.onKeyUp.bind(this);
 
         this.setListener();
-    }
-
-    draw(framesCounter) {
-
-        (this.directionX < 0) ? this.drawImage(this.imageWL) : this.drawImage(this.imageWR);
-        (this.directionY < 0) ? this.drawImage(this.imageCLIMB) : (this.directionY > 0) ? this.drawImage(this.imageCLIMB) : false;
-
-        if (this.directionX !== 0 && framesCounter % 4 === 0) {
-            this.framesIndex++;
-            this.framesIndex = this.framesIndex > 2 ? 0 : this.framesIndex;
-        }
-
-        if (this.directionY !== 0 && framesCounter % 4 === 0) {
-            this.framesIndex++;
-            this.framesIndex = this.framesIndex > 1 ? 0 : this.framesIndex;
-        }
     }
 
     move() {
@@ -123,6 +151,34 @@ class Player {
         } else {
             this.posY += this.posYSpeed;
             this.posYSpeed += .4;
+        }
+    }
+
+    draw(framesCounter) {
+
+        (this.directionX < 0) ? this.drawImage(this.imageWL) : this.drawImage(this.imageWR);
+        (this.directionY < 0) ? this.drawImage(this.imageCLIMB) : (this.directionY > 0) ? this.drawImage(this.imageCLIMB) : false;
+
+        if (this.isDead) {
+            this.directionX = 0;
+            this.directionY = 0;
+            this.drawImage(this.imageDIE);
+            this.removeListener();
+        }
+
+        if (framesCounter % 10 === 0 && this.isDead) {
+            this.framesIndex++;
+            this.framesIndex = this.framesIndex > 3 ? 0 : this.framesIndex;
+        }
+
+        if (this.directionX !== 0 && framesCounter % 4 === 0) {
+            this.framesIndex++;
+            this.framesIndex = this.framesIndex > 2 ? 0 : this.framesIndex;
+        }
+
+        if (this.directionY !== 0 && framesCounter % 4 === 0) {
+            this.framesIndex++;
+            this.framesIndex = this.framesIndex > 1 ? 0 : this.framesIndex;
         }
     }
 
