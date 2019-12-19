@@ -14,6 +14,7 @@ class Barrel {
         this.framesIndex = 0;
         this.shallDescend = shallDescend;
         this.isDescending = false;
+        this.stopAnimation = false;
 
         this.width = 96 / this.frames;
         this.height = 20;
@@ -28,6 +29,12 @@ class Barrel {
     }
 
     draw(framesCounter) {
+
+        if (this.stopAnimation) {
+            this.posX = this.posX;
+            this.posY = this.posY;
+            return;
+        }
 
         if (this.isDescending) {
             if (this.posY >= this.LADDERHEIGHT) this.isDescending = false;

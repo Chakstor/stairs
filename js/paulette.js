@@ -16,6 +16,16 @@ class Paulette {
         this.posY = posY - this.height;
     }
 
+    says(text) {
+        this.ctx.font = ".6em 'Press Start 2P'";
+        this.ctx.textAlign = "center";
+
+        switch(text) {
+            case 'missing key':
+                this.ctx.fillText('You need the key!', this.posX + this.width / 2, this.posY - 13);
+        }
+    }
+
     draw(framesCounter) {
 
         this.drawImage(this.image);
