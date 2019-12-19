@@ -145,25 +145,16 @@ class Game {
     }
 
     makeBarrelDescend() {
-
-        let ladders = this.isBarrelOverLadder();
-
-        ladders.forEach(barrels => {
-            barrels.forEach(barrel => {
-                if (barrel.shallDescend) barrel.isDescending = true;
+        this.ladders.forEach(ladder => {
+            this.barrels.forEach(barrel => {
+                if (barrel.posX + barrel.width / 12 > ladder.posX &&
+                    ladder.posX + ladder.width / 12 > barrel.posX &&
+                    barrel.posY + barrel.height > ladder.posY - barrel.height &&
+                    (ladder.posY - barrel.height) + ladder.height > barrel.posY) {
+                        if (barrel.shallDescend) barrel.isDescending = true;
+                    }
             })
         })
-    }
-
-    isBarrelOverLadder() {
-        return this.ladders.map(ladder => (
-            this.barrels.filter(barrel => (
-                barrel.posX +  barrel.width/12 > ladder.posX &&
-                ladder.posX + ladder.width/12 > barrel.posX &&
-                barrel.posY + barrel.height > ladder.posY - barrel.height &&
-                (ladder.posY - barrel.height) + ladder.height > barrel.posY
-            ))
-        ));
     }
 
     hasPlayerCollidedWithBarrel() {
