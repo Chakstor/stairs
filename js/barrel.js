@@ -38,7 +38,6 @@ class Barrel {
             this.drawImage(this.image);
         }
 
-
         if (framesCounter % 4 === 0) {
             this.framesIndex++;
             this.framesIndex = this.framesIndex > 3 ? 0 : this.framesIndex;
@@ -57,5 +56,7 @@ class Barrel {
             this.width,
             this.height
         );
+
+        //this.ctx.fillRect(this.posX + this.width, this.posY - (this.height * 3), 1, this.height*2);
     }
 }
