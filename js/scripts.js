@@ -1,14 +1,11 @@
 window.onload = () => {
-    let button = document.getElementById('start');
+    let button = document.getElementById('start-btn');
 
-    const game = new Game();
-    game.init();
+    button.addEventListener('click', (e) => {
+        const game = new Game();
+              game.init();
 
-    // button.addEventListener('click', (e) => {
-    //     const game = new Game();
-    //           game.init();
-
-    //     button.style.display = "none";
-    // });
+        document.querySelector('.game-instructions').style.display = "none";
+    });
 }
 

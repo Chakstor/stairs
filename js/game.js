@@ -32,7 +32,7 @@ class Game {
         this.platforms = [];
         this.barrels = [];
         this.generatedItems = [];
-        this.paulette = {};
+        this.pauline = {};
 
         this.soundPlayer = new soundPlayer();
         this.scoreboard = new Scoreboard(this.ctx, this.canvasWidth, this.canvasHeight, 5, 50);
@@ -62,16 +62,15 @@ class Game {
             this.removeBarrels();
             this.updatePlayerYBase();
             this.makeBarrelDescend();
-            this.isPlayerOutOfPlatform();
             this.hasPlayerJumpedOverABarrel();
 
             if (this.hasPlayerCollidedWithBarrel()) this.playerLose();
 
-            if (!this.isGameOver && this.framesCounter % 300 === 0) this.scoreboard.bonusScore -= 100;
-            if (!this.isGameOver && this.framesCounter % 50 === 0) this.generateBarrel();
+            if (!this.isGameOver && this.framesCounter % 300 === 0 && this.scoreboard.bonusScore > 0) this.scoreboard.bonusScore -= 100;
+            if (!this.isGameOver && this.framesCounter % 80 === 0) this.generateBarrel();
 
-            if (this.hasPlayerReachedGoal(this.paulette)) {
-                if (!this.itemBag.checkItem('key')) this.paulette.says('missing key');
+            if (this.hasPlayerReachedGoal(this.pauline)) {
+                if (!this.itemBag.checkItem('key')) this.pauline.says('missing key');
                 if (this.itemBag.checkItem('key')) this.playerWin();
             }
 
@@ -88,16 +87,19 @@ class Game {
         this.barrels.forEach(barrel => barrel.draw(this.framesCounter));
         this.generatedItems.forEach(item => item.draw());
 
+        this.water && this.water.draw();
         this.point && this.point.draw();
+
         this.scoreboard.draw();
         this.itemBag.draw();
 
         this.player.draw(this.framesCounter);
-        this.paulette.draw(this.framesCounter);
+        this.pauline.draw(this.framesCounter);
     }
 
     moveAll() {
         this.player.move();
+        this.platforms.forEach(platform => platform.move() )
     }
 
     clearAll() {
@@ -119,7 +121,7 @@ class Game {
         let collectableItemsCount = 0;
         let collectableItemsKeys = Object.keys(this.collectableItems).sort(() => Math.random() - 0.5);
 
-        this.platforms.push(new Platform(this.ctx, this.canvasWidth, this.canvasHeight, 0, this.canvasHeight - 50));
+        this.platforms.push(new Platform(this.ctx, 0, this.canvasHeight - 50, this.canvasWidth));
 
         for (let i = 0; i < platformsQty; i++) {
 
@@ -128,7 +130,7 @@ class Game {
 
             let posY = this.canvasHeight - (50 + ladderHeight * i);
 
-            this.platforms.push(new Platform(this.ctx, this.canvasWidth, this.canvasHeight, 0, posY - ladderHeight));
+            this.platforms.push(new Platform(this.ctx, 0, posY - ladderHeight, this.canvasWidth));
             this.ladders.push(new Ladder(this.ctx, this.canvasWidth, this.canvasHeight, this.generateRandomXPosition(min, max), posY, 90));
 
             if (collectableItemsCount <= collectableItemsKeys.length && i % 2 === 0) {
@@ -137,7 +139,7 @@ class Game {
             }
         }
 
-        this.setPaulettePosition(this.ladders, this.platforms);
+        this.setPaulinePosition(this.platforms);
     }
 
     placeCollectableItems(key, item, posY, itemCount) {
@@ -151,17 +153,66 @@ class Game {
         this.generatedItems.push(new Item(this.ctx, this.canvasWidth, this.canvasHeight, item, this));
     }
 
-    setPaulettePosition(platforms) {
-
-        let posX = this.canvasWidth / 7;
-        let posY = platforms[platforms.length - 1].posY;
-
-        this.paulette = new Paulette(this.ctx, this.canvasWidth, this.canvasHeight, posX, 0, this);
-        this.paulette.posY = posY - this.paulette.height;
-    }
-
     generateRandomXPosition(min, max) {
         return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+
+
+    // -------------
+    // STAGE 2
+    // -------------
+    generateStage2(platformsQty = 6) {
+
+        this.water = new Water(this.ctx, 0, this.canvasHeight - 15, this.canvasWidth);
+
+        this.platforms.push(new Platform(this.ctx, 0, this.canvasHeight + this.player.height, this.canvasWidth));
+
+        this.platforms.push(new Platform(this.ctx, 0, this.canvasHeight - 50, 88));
+        this.platforms.push(new Platform(this.ctx, 100, this.canvasHeight - 50, 88, 'x', 100, this.canvasWidth - 100));
+
+        this.ladders.push(new Ladder(this.ctx, this.canvasWidth, this.canvasHeight, 60, this.canvasHeight - 50, 100));
+        this.platforms.push(new Platform(this.ctx, 0, this.canvasHeight - 150, 88));
+        this.ladders.push(new Ladder(this.ctx, this.canvasWidth, this.canvasHeight, 5, this.canvasHeight - 150, 150));
+
+        this.platforms.push(new Platform(this.ctx, 0, this.canvasHeight - 300, 60));
+
+        this.platforms.push(new Platform(this.ctx, 70, this.canvasHeight - 300, 40, 'y', this.canvasHeight - 450, this.canvasHeight - 300));
+
+        this.platforms.push(new Platform(this.ctx, 0, this.canvasHeight - 450, 60));
+
+        this.platforms.push(new Platform(this.ctx, 200, this.canvasHeight - 150, 50));
+        this.platforms.push(new Platform(this.ctx, 260, this.canvasHeight - 300, 40, 'y', this.canvasHeight - 300, this.canvasHeight - 150));
+
+        this.platforms.push(new Platform(this.ctx, 310, this.canvasHeight - 300, 40));
+        this.platforms.push(new Platform(this.ctx, 360, this.canvasHeight - 340, 40));
+        this.platforms.push(new Platform(this.ctx, 410, this.canvasHeight - 380, 40));
+
+        this.platforms.push(new Platform(this.ctx, 520, this.canvasHeight - 230, 380));
+        this.ladders.push(new Ladder(this.ctx, this.canvasWidth, this.canvasHeight, 5, this.canvasHeight - 150, 150));
+        this.platforms.push(new Platform(this.ctx, 700, this.canvasHeight - 330, 200));
+        this.ladders.push(new Ladder(this.ctx, this.canvasWidth, this.canvasHeight, this.canvasWidth - 200, this.canvasHeight - 230, 100));
+        this.ladders.push(new Ladder(this.ctx, this.canvasWidth, this.canvasHeight, this.canvasWidth - 50, this.canvasHeight - 330, 270));
+        this.platforms.push(new Platform(this.ctx, this.canvasWidth - 100, 200, 100));
+
+        this.platforms.push(new Platform(this.ctx, this.canvasWidth / 2, 200, 88, 'x', this.canvasWidth / 2, this.canvasWidth - 190));
+        this.platforms.push(new Platform(this.ctx, 0, 200, this.canvasWidth / 2));
+
+        this.collectableItems['umbrella'].name = 'umbrella';
+        this.collectableItems['umbrella'].posX = 15;
+        this.collectableItems['umbrella'].posY = 280;
+        this.generatedItems.push(new Item(this.ctx, this.canvasWidth, this.canvasHeight, this.collectableItems['umbrella'], this));
+
+        this.collectableItems['purse'].name = 'purse';
+        this.collectableItems['purse'].posX = 680;
+        this.collectableItems['purse'].posY = 310;
+        this.generatedItems.push(new Item(this.ctx, this.canvasWidth, this.canvasHeight, this.collectableItems['purse'], this));
+
+        this.collectableItems['key'].name = 'key';
+        this.collectableItems['key'].posX = this.canvasWidth - 90;
+        this.collectableItems['key'].posY = this.canvasHeight - 120;
+        this.generatedItems.push(new Item(this.ctx, this.canvasWidth, this.canvasHeight, this.collectableItems['key'], this));
+
+        this.setPaulinePosition(this.platforms);
     }
 
 
@@ -187,7 +238,10 @@ class Game {
 
     getPlayersClosestPlatform() {
         return this.platforms.filter(platform => {
-            return ((platform.posY + 10) > this.player.posY + this.player.height)
+            return (
+                platform.posY + 10 > this.player.posY + this.player.height &&
+                (this.player.posX + this.player.width > platform.posX && this.player.posX < platform.posX + platform.width)
+            )
         }).reverse();
     }
 
@@ -266,15 +320,6 @@ class Game {
         );
     }
 
-    isPlayerOutOfPlatform() {
-
-        let currentPlatform = this.player.currentPlatform;
-
-        if (this.player.posX > currentPlatform.posX + currentPlatform.width) {
-            this.player.posYBase = this.platforms[0].posY - this.player.height;
-        }
-    }
-
     updatePlayerYBase() {
 
         let closestPlatform = this.getPlayersClosestPlatform();
@@ -295,6 +340,15 @@ class Game {
         this.itemBag.setItem(item);
         this.sumPoints(300, this.player.posX + this.player.width, this.player.posY - 10);
         this.generatedItems = this.generatedItems.filter(i => i.item.name !== item.name);
+    }
+
+    setPaulinePosition(platforms) {
+
+        let posX = this.canvasWidth / 7;
+        let posY = platforms[platforms.length - 1].posY;
+
+        this.pauline = new Pauline(this.ctx, this.canvasWidth, this.canvasHeight, posX, posY, this);
+        this.pauline.posY = posY - this.pauline.height;
     }
 
 
@@ -318,7 +372,7 @@ class Game {
         this.soundPlayer.play(roundClear);
         this.scoreboard.updateScore();
 
-        this.paulette.openJail();
+        this.pauline.openJail();
 
         setTimeout(() => {
             clearInterval(this.interval);
