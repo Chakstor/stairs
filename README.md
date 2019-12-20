@@ -1,6 +1,6 @@
-# Stairs (WT)
+# Stairs (Working title, actually it should be Ladders)
 
-A personal recreation of a NES classic, Donkey Kong. Done with HTTML and JS, using Canvas API.
+A personal recreation of a NES classic, Donkey Kong. Done with HTTML and JS, using Canvas API. Ironhack's 1st module final project 👨🏻‍💻
 
 ## 🚀 How to run this project
 Just open up the `index.html` file and enjoy!
