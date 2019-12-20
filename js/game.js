@@ -18,8 +18,8 @@ class Game {
             },
             'purse': {
                 image: 'images/items/purse.png',
-                width: 24,
-                height: 33
+                width: 18,
+                height: 25
             },
             'key': {
                 image: 'images/items/key.png',
@@ -33,8 +33,6 @@ class Game {
         this.barrels = [];
         this.generatedItems = [];
         this.paulette = {};
-        this.score = 0;
-        this.bonusScore = 5000;
 
         this.soundPlayer = new soundPlayer();
         this.scoreboard = new Scoreboard(this.ctx, this.canvasWidth, this.canvasHeight, 5, 50);
@@ -43,7 +41,7 @@ class Game {
     }
 
     init() {
-        this.generateScenary();
+        this.generateStage();
         this.renderLoop();
 
         this.soundPlayer.play(intro);
@@ -69,8 +67,8 @@ class Game {
 
             if (this.hasPlayerCollidedWithBarrel()) this.playerLose();
 
-            if (!this.isGameOver && this.framesCounter % 300 === 0) this.bonusScore -= 100;
-            if (!this.isGameOver && this.framesCounter % 100 === 0) this.generateBarrel();
+            if (!this.isGameOver && this.framesCounter % 300 === 0) this.scoreboard.bonusScore -= 100;
+            if (!this.isGameOver && this.framesCounter % 50 === 0) this.generateBarrel();
 
             if (this.hasPlayerReachedGoal(this.paulette)) {
                 if (!this.itemBag.checkItem('key')) this.paulette.says('missing key');
@@ -91,7 +89,7 @@ class Game {
         this.generatedItems.forEach(item => item.draw());
 
         this.point && this.point.draw();
-        this.scoreboard.draw(this.score, this.bonusScore);
+        this.scoreboard.draw();
         this.itemBag.draw();
 
         this.player.draw(this.framesCounter);
@@ -106,14 +104,24 @@ class Game {
         this.ctx.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
     }
 
-    generateScenary(platformsQty = 5) {
+    sumPoints(points, posX, posY) {
+        this.scoreboard.score += points;
+        this.point = new Point(this.ctx, this.canvasWidth, this.canvasHeight, posX, posY, points);
+    }
+
+
+    // -------------
+    // STAGE
+    // -------------
+    generateStage(platformsQty = 6) {
 
         let ladderHeight = 90;
+        let collectableItemsCount = 0;
         let collectableItemsKeys = Object.keys(this.collectableItems).sort(() => Math.random() - 0.5);
 
-        this.platforms.push(new Platform(this.ctx, this.canvasWidth, this.canvasHeight, 10, this.canvasHeight - 50));
+        this.platforms.push(new Platform(this.ctx, this.canvasWidth, this.canvasHeight, 0, this.canvasHeight - 50));
 
-        for (let i = 0; i <= platformsQty; i++) {
+        for (let i = 0; i < platformsQty; i++) {
 
             let min = i % 2 === 0 ? 100 : this.canvasWidth / 2;
             let max = i % 2 === 0 ? this.canvasWidth / 2 : this.canvasWidth - 100;
@@ -123,29 +131,37 @@ class Game {
             this.platforms.push(new Platform(this.ctx, this.canvasWidth, this.canvasHeight, 0, posY - ladderHeight));
             this.ladders.push(new Ladder(this.ctx, this.canvasWidth, this.canvasHeight, this.generateRandomXPosition(min, max), posY, 90));
 
-            if (i < collectableItemsKeys.length) this.placeCollectableItems(collectableItemsKeys[i], this.collectableItems[collectableItemsKeys[i]], posY);
+            if (collectableItemsCount <= collectableItemsKeys.length && i % 2 === 0) {
+                this.placeCollectableItems(collectableItemsKeys[collectableItemsCount], this.collectableItems[collectableItemsKeys[collectableItemsCount]], posY, collectableItemsCount);
+                collectableItemsCount++;
+            }
         }
-
 
         this.setPaulettePosition(this.ladders, this.platforms);
     }
 
-    generateRandomXPosition(min, max) {
-        return Math.floor(Math.random() * (max - min + 1)) + min;
+    placeCollectableItems(key, item, posY, itemCount) {
+
+        let min = itemCount % 2 !== 0 ? 50 : this.canvasWidth / 1.5;
+        let max = itemCount % 2 !== 0 ? this.canvasWidth / 5 : this.canvasWidth - 100;
+
+        item.name = key;
+        item.posX = this.generateRandomXPosition(min, max);
+        item.posY = posY - 50;
+        this.generatedItems.push(new Item(this.ctx, this.canvasWidth, this.canvasHeight, item, this));
     }
 
     setPaulettePosition(platforms) {
 
-        let posX = this.canvasWidth/7;
+        let posX = this.canvasWidth / 7;
         let posY = platforms[platforms.length - 1].posY;
 
-        this.paulette = new Paulette(this.ctx, this.canvasWidth, this.canvasHeight, posX, 0);
+        this.paulette = new Paulette(this.ctx, this.canvasWidth, this.canvasHeight, posX, 0, this);
         this.paulette.posY = posY - this.paulette.height;
     }
 
-    sumPoints(points, posX, posY) {
-        this.score += points;
-        this.point = new Point(this.ctx, this.canvasWidth, this.canvasHeight, posX, posY, points);
+    generateRandomXPosition(min, max) {
+        return Math.floor(Math.random() * (max - min + 1)) + min;
     }
 
 
@@ -233,17 +249,20 @@ class Game {
         ));
 
         if (hasJumpedOverBarrel) {
-            this.sumPoints(100, this.player.posX + this.player.width, this.player.posY + 30);
+            this.sumPoints(100, this.player.posX - 20, this.player.posY + this.player.height + 10);
             this.soundPlayer.play(pointsSound);
         }
     }
 
     hasPlayerReachedGoal(goal) {
+
+        let marginError = 15;
+
         return (
-            this.player.posX + this.player.width > goal.posX &&
-            goal.posX + goal.width > this.player.posX &&
-            this.player.posY + this.player.height > goal.posY &&
-            goal.posY + goal.height > this.player.posY
+            this.player.posX + this.player.width >= goal.jailX - marginError &&
+            (goal.jailX + marginError) + goal.jailWidth > this.player.posX &&
+            this.player.posY + this.player.height > goal.jailY &&
+            goal.jailY + goal.jailHeight > this.player.posY
         );
     }
 
@@ -270,17 +289,11 @@ class Game {
     // -------------
     // ITEMS
     // -------------
-    placeCollectableItems(key, item, posY) {
-        item.name = key;
-        item.posX = this.generateRandomXPosition(700, 800);
-        item.posY = posY - 50;
-        this.generatedItems.push(new Item(this.ctx, this.canvasWidth, this.canvasHeight, item, this));
-    }
 
     collectItem(item) {
         this.soundPlayer.play(gotItemSound);
         this.itemBag.setItem(item);
-        this.sumPoints(300, this.player.posX + this.player.width, this.player.posY + 10);
+        this.sumPoints(300, this.player.posX + this.player.width, this.player.posY - 10);
         this.generatedItems = this.generatedItems.filter(i => i.item.name !== item.name);
     }
 
@@ -295,14 +308,20 @@ class Game {
 
         this.soundPlayer.stop(theme);
         this.soundPlayer.play(dieSound);
-
-        // clearInterval(this.interval);
     }
 
     playerWin() {
+
+        this.isGameOver = true;
+
         this.soundPlayer.stop(theme);
         this.soundPlayer.play(roundClear);
+        this.scoreboard.updateScore();
 
-        clearInterval(this.interval);
+        this.paulette.openJail();
+
+        setTimeout(() => {
+            clearInterval(this.interval);
+        }, 20);
     }
 }
