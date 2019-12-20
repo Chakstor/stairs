@@ -1,4 +1,5 @@
 body {
+    background: black;
     margin: 0;
     padding: 0;
 }
@@ -7,6 +8,11 @@ body {
     background: url(../images/main-logo.png) no-repeat;
     width: 736px;
     height: 260px;
+    margin: 50px auto;
     text-indent: -100%;
     overflow-x: hidden;
+}
+
+main {
+    text-align: center;
 }
