@@ -6,9 +6,15 @@ class Scoreboard {
 
         this.posX = posX;
         this.posY = posY;
+
+        this.score = 0;
+        this.bonusScore = 5000;
     }
 
-    draw(score, bonusScore) {
+    draw() {
+        this.ctx.closePath();
+        this.ctx.beginPath();
+
         // Score
         this.ctx.textAlign = "start";
 
@@ -22,18 +28,20 @@ class Scoreboard {
 
         this.ctx.fillStyle = "#fff";
         this.ctx.font = ".85em 'Press Start 2P'";
-        this.ctx.fillText(score.toString().padStart(6, 0), this.posX + 125, this.posY - 20);
+        this.ctx.fillText(this.score.toString().padStart(6, 0), this.posX + 125, this.posY - 20);
 
         this.ctx.font = ".75em 'Press Start 2P'";
-        this.ctx.fillText(score.toString().padStart(6, 0), this.posX + 75, this.posY);
+        this.ctx.fillText(this.score.toString().padStart(6, 0), this.posX + 75, this.posY);
 
         // Bonus
-        this.ctx.lineWidth = 1;
+        this.ctx.lineWidth = 2;
         this.ctx.rect(this.canvasWidth - 85, this.posY - 27, 68, 22);
         this.ctx.strokeStyle = "#e20f5a";
         this.ctx.stroke();
 
-        this.ctx.lineWidth = 1;
+        this.ctx.closePath();
+        this.ctx.beginPath();
+
         this.ctx.rect(this.canvasWidth - 90, this.posY - 38, 78, 38);
         this.ctx.strokeStyle = "#5aacc1";
         this.ctx.stroke();
@@ -49,6 +57,11 @@ class Scoreboard {
 
         this.ctx.font = ".95em 'Press Start 2P'";
         this.ctx.fillStyle = "#fff"
-        this.ctx.fillText(bonusScore, this.canvasWidth - 50, this.posY - 8);
+        this.ctx.fillText(this.bonusScore, this.canvasWidth - 50, this.posY - 8);
+    }
+
+    updateScore() {
+        this.score += this.bonusScore;
+        this.bonusScore = 0;
     }
 }

@@ -78,14 +78,7 @@ class Player {
         this.directionY = 0;
         this.jumpMaxHeight = 5.8;
 
-        this.isJumping = false;
-        this.barrelJumped = false;
-
-        // Player actions
-        this.canJump = true;
-        this.canWalk = true;
         this.canClimb = false;
-        this.isClimbing = false;
 
         this.onKeyDown = function(event) {
             switch (event.keyCode) {
@@ -105,14 +98,13 @@ class Player {
                     if (this.posY >= this.posYBase) {
                         this.posY -= this.posYSpeed;
                         this.posYSpeed -= this.jumpMaxHeight;
-                        this.isJumping = true;
                         this.game.soundPlayer.play(jumpSound);
                     }
                     break;
             }
         }
 
-        this.onKeyUp = function (event) {
+        this.onKeyUp = function () {
             this.directionX = 0;
             this.directionY = 0;
         }
@@ -131,9 +123,7 @@ class Player {
 
     walk() {
         this.posX += this.posXSpeed * this.directionX;
-
-        if (this.posX <= 0) this.posX = 1
-        if (this.posX + this.width >= this.canvasWidth) this.posX = this.canvasWidth - this.width - 1;
+        this.stageLimits();
     }
 
     climb() {
@@ -152,9 +142,10 @@ class Player {
         }
     }
 
-    // hasItem(itemName) {
-    //     return this.items.find(i => i.item.name === itemName);
-    // }
+    stageLimits() {
+        if (this.posX <= 0) this.posX = 1
+        if (this.posX + this.width >= this.canvasWidth) this.posX = this.canvasWidth - this.width - 1;
+    }
 
     draw(framesCounter) {
 

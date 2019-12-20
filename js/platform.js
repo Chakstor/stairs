@@ -1,5 +1,5 @@
 class Platform {
-    constructor(ctx, canvasWidth, canvasHeight, posX, posY) {
+    constructor(ctx, canvasWidth, canvasHeight, posX, posY, width = canvasWidth) {
         this.ctx = ctx;
         this.canvasWidth = canvasWidth;
         this.canvasHeight = canvasHeight;
@@ -7,7 +7,7 @@ class Platform {
         this.image = new Image();
         this.image.src = "images/scenario/platform.png";
 
-        this.width = this.canvasWidth;
+        this.width = width;
         this.height = 16;
         this.posX = posX;
         this.posY = posY;

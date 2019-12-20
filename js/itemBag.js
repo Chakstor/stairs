@@ -16,10 +16,15 @@ class ItemBag {
     }
 
     draw() {
-        this.ctx.lineWidth = 1;
+        this.ctx.closePath();
+        this.ctx.beginPath();
+
+        this.ctx.lineWidth = 2;
 
         Object.keys(this.items).forEach((itemKey, i) => {
             this.ctx.rect(this.posX + (i * 45), this.posY, 40, 40);
+            this.ctx.strokeStyle = "#5aacc1";
+            this.ctx.stroke();
 
             let pX = this.posX + (i * 45) + (40 / 2) - (this.items[itemKey].width / 2);
             let pY = this.posY + (40 / 2) - (this.items[itemKey].height / 2);

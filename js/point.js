@@ -16,6 +16,6 @@ class Point {
         this.ctx.fillText(this.points, this.posX, this.posY);
         this.posY -= .5;
 
-        setTimeout(() => { this.posX = this.canvasWidth; }, 300);
+        setTimeout(() => { this.posX = this.canvasWidth; }, 500);
     }
 }
