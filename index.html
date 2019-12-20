@@ -28,11 +28,28 @@
     <script src="js/scripts.js"></script>
 
     <title>Stairs</title>
+
 </head>
 <body>
     <main>
-        <button id="start">Start game</button>
-        <canvas id="stairs" width="900" height="800"></canvas>
+        <div class="game-container absolutely-centered">
+            <div class="corners-top"></div>
+            <div class="corners-bottom"></div>
+            <div class="game-instructions absolutely-centered">
+                <h2>How to play</h2>
+                <ol>
+                    <li>Control mario in 4 directions.</li>
+                    <li>Get points by jumping barrels.</li>
+                    <li>Don’t forget to get the key.</li>
+                    <li>Rescue Pauline.</li>
+                </ol>
+                <div>Move Mario with arrow keys</div>
+                <div>Jump with the space bar key</div>
+                <div>Win 300 points for each special item you collect</div>
+                <button id="start-btn">Start</button>
+            </div>
+            <canvas id="stairs" width="900" height="800"></canvas>
+        </div>
     </main>
 </body>
 </html>
