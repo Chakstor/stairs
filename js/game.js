@@ -397,26 +397,6 @@ class Game {
         this.pauline.openJail();
 
         setTimeout(() => { clearInterval(this.interval) }, 20);
-
-        if (this.currentStage < this.maxStages) {
-            setTimeout(() => { goToStage(stage++) }, 5000);
-        }
-    }
-
-
-    // -------------
-    // Listeners
-    // -------------
-    setListener() {
-        document.addEventListener('keyup', (e) => {
-            switch (e.keyCode) {
-                case 49: // 1
-                    goToStage(1);
-                    break;
-                case 50: // 2
-                    goToStage(2);
-                    break;
-            }
-        });
+        setTimeout(() => { comingsoon() }, 3000);
     }
 }

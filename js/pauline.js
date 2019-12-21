@@ -76,6 +76,6 @@ class Pauline {
     }
 
     openJail() {
-        this.ctx.clearRect(this.posX + (30 * 2), this.posY - this.height + 15, 20, 72);
+        this.ctx.clearRect(this.posX + (30 * 2), this.posY - this.height + 14, 20, 72);
     }
 }

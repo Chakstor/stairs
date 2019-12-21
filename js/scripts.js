@@ -21,5 +21,10 @@ function goToStage(stage) {
     document.querySelector('.game-container').appendChild(canvas);
 
     game = new Game();
-    game.init(stage);
+    game.init();
+}
+
+function comingsoon() {
+    document.querySelector('.coming-soon').style.zIndex = 2;
+    document.querySelector('.coming-soon').style.opacity = 1;
 }
