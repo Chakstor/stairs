@@ -9,17 +9,17 @@ window.onload = () => {
     });
 }
 
-function retry() {
+function goToStage(stage) {
     let canvasElement = document.getElementById('stairs');
     document.querySelector('.game-container').removeChild(canvasElement);
 
     let canvas = document.createElement('canvas');
-        canvas.id = 'stairs';
-        canvas.width = "900";
-        canvas.height = "800";
+    canvas.id = 'stairs';
+    canvas.width = "900";
+    canvas.height = "800";
 
     document.querySelector('.game-container').appendChild(canvas);
 
     game = new Game();
-    game.init();
+    game.init(stage);
 }
