@@ -5,39 +5,6 @@ class Player {
         this.canvasHeight = canvasHeight;
         this.game = game;
 
-        // this.sprites = {
-        //     'WR': {
-        //         src: "images/mario/walking_right.png",
-        //         width: 90,
-        //         height: 32,
-        //         frameRate: 3
-        //     },
-        //     'WL': {
-        //         src: "images/mario/walking_left.png",
-        //         width: 90,
-        //         height: 32,
-        //         frameRate: 3
-        //     },
-        //     'CLIMB': {
-        //         src: "images/mario/climbing.png",
-        //         width: 90,
-        //         height: 32,
-        //         frameRate: 3
-        //     },
-        //     'JUMP': {
-        //         src: "images/mario/jumping_right.png",
-        //         width: 90,
-        //         height: 32,
-        //         frameRate: 3
-        //     },
-        //     'DIES': {
-        //         src: "images/mario/rolling.png",
-        //         width: 128,
-        //         height: 32,
-        //         frameRate: 4
-        //     }
-        // };
-
         this.isDying = false;
         this.isDead = false;
 

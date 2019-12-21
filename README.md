@@ -34,5 +34,5 @@ Move Mario around using the arrow keys
 - Stage 2 (currently in beta).
 
  ## 🌌 Screenshots...
-![](images/ladders1.png)
-![](images/ladders2.png)
+[http://carlosmateo.net/mario/ladders1.png]
+[http://carlosmateo.net/mario/ladders2.png]
