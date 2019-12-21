@@ -377,5 +377,6 @@ class Game {
         this.pauline.openJail();
 
         setTimeout(() => { clearInterval(this.interval) }, 20);
+        setTimeout(() => { comingsoon() }, 3000);
     }
 }

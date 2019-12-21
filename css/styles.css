@@ -92,3 +92,13 @@ body {
 #start-btn:active {
     margin-top: 1px;
 }
+
+.coming-soon {
+    background: url(../images/decoration/coming-soon.gif) no-repeat;
+    width: 818px;
+    height: 712px;
+    position: absolute;
+    text-indent: -9999px;
+    opacity: 0;
+    z-index: -1;
+}

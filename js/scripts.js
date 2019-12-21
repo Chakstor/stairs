@@ -23,3 +23,8 @@ function retry() {
     game = new Game();
     game.init();
 }
+
+function comingsoon() {
+    document.querySelector('.coming-soon').style.zIndex = 2;
+    document.querySelector('.coming-soon').style.opacity = 1;
+}
