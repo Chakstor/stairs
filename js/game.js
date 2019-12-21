@@ -9,6 +9,8 @@ class Game {
         this.fps = 60;
         this.framesCounter = 0;
         this.isGameOver = false;
+        this.currentStage = 1;
+        this.maxStages = 2;
 
         this.collectableItems = {
             'umbrella': {
@@ -38,10 +40,12 @@ class Game {
         this.scoreboard = new Scoreboard(this.ctx, this.canvasWidth, this.canvasHeight, 5, 50);
         this.itemBag = new ItemBag(this.ctx, this.canvasWidth, this.canvasHeight, 660, 10, this.collectableItems);
         this.player = new Player(this.ctx, this.canvasWidth, this.canvasHeight, 30, this.canvasHeight - 50, this);
+
+        this.setListener();
     }
 
-    init() {
-        this.generateStage();
+    init(stage) {
+        this.chooseStage(stage);
         this.renderLoop();
 
         this.soundPlayer.play(intro);
@@ -59,15 +63,18 @@ class Game {
             this.moveAll();
             this.clearAll();
             this.drawAll();
-            this.removeBarrels();
             this.updatePlayerYBase();
-            this.makeBarrelDescend();
-            this.hasPlayerJumpedOverABarrel();
 
-            if (this.hasPlayerCollidedWithBarrel()) this.playerLose();
+            if (this.currentStage !== 2) {
+                this.removeBarrels();
+                this.makeBarrelDescend();
+                this.hasPlayerJumpedOverABarrel();
+            }
+
+            if (this.currentStage !== 2 && this.hasPlayerCollidedWithBarrel()) this.playerLose();
 
             if (!this.isGameOver && this.framesCounter % 300 === 0 && this.scoreboard.bonusScore > 0) this.scoreboard.bonusScore -= 100;
-            if (!this.isGameOver && this.framesCounter % 80 === 0) this.generateBarrel();
+            if (this.currentStage !== 2 && !this.isGameOver && this.framesCounter % 80 === 0) this.generateBarrel();
 
             if (this.hasPlayerReachedGoal(this.pauline)) {
                 if (!this.itemBag.checkItem('key')) this.pauline.says('missing key');
@@ -109,6 +116,19 @@ class Game {
     sumPoints(points, posX, posY) {
         this.scoreboard.score += points;
         this.point = new Point(this.ctx, this.canvasWidth, this.canvasHeight, posX, posY, points);
+    }
+
+    chooseStage(level) {
+
+        this.currentStage = level || 1;
+
+        switch (level) {
+            case 2:
+                this.generateStage2();
+                break;
+            default:
+                this.generateStage();
+        }
     }
 
 
@@ -159,9 +179,10 @@ class Game {
 
 
     // -------------
-    // STAGE 2
+    // STAGE 2 - BETA
+    // Needs refactor :)
     // -------------
-    generateStage2(platformsQty = 6) {
+    generateStage2() {
 
         this.water = new Water(this.ctx, 0, this.canvasHeight - 15, this.canvasWidth);
 
@@ -363,11 +384,10 @@ class Game {
         this.soundPlayer.stop(theme);
         this.soundPlayer.play(dieSound);
 
-        setTimeout(() => { retry() }, 5000);
+        setTimeout(() => { goToStage(this.currentStage) }, 5000);
     }
 
     playerWin() {
-
         this.isGameOver = true;
 
         this.soundPlayer.stop(theme);
