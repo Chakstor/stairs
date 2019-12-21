@@ -78,6 +78,7 @@ body {
     text-transform: uppercase;
     cursor: pointer;
     position: absolute;
+    z-index: 100;
     left: 50%;
     bottom: -99px;
     transform: translateX(-50%);

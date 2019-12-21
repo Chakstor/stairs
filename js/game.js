@@ -40,8 +40,6 @@ class Game {
         this.scoreboard = new Scoreboard(this.ctx, this.canvasWidth, this.canvasHeight, 5, 50);
         this.itemBag = new ItemBag(this.ctx, this.canvasWidth, this.canvasHeight, 660, 10, this.collectableItems);
         this.player = new Player(this.ctx, this.canvasWidth, this.canvasHeight, 30, this.canvasHeight - 50, this);
-
-        this.setListener();
     }
 
     init(stage) {
