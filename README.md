@@ -1,6 +1,6 @@
-# Stairs (Working title, actually it should be Ladders)
-
+# Stairs (Working title)
 A personal recreation of a NES classic, Donkey Kong. Done with HTTML and JS, using Canvas API. Ironhack's 1st module final project 👨🏻‍💻
+Actually Ladders is a more accurate name 🤯
 
 ## 🚀 How to run this project
 Just open up the `index.html` file and enjoy!
@@ -13,8 +13,8 @@ Just open up the `index.html` file and enjoy!
 
 ## 🕹 How to play
 Move Mario around using the arrow keys
-- ⬅️➡️ - left or right
-- ⬆️⬇️ - up or down (ladders)
+- ⬅️➡️ - left or right.
+- ⬆️⬇️ - up or down (ladders).
 - [spacebar] - jump.
 
 ## 🤓 Technologies used for this project
@@ -28,7 +28,7 @@ Move Mario around using the arrow keys
 - Sometimes barrels don't give points.
 - Mario can win points if he stays in a ladder and barrels pass below him.
 - You can go throught Pauline's jail if you don't have the key.
--
- ## ⏳ Comming soon...
+
+ ## ⏳ Coming soon...
 - Save user's score in localStorage.
 - Stage 2 (currently in beta).
