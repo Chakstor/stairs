@@ -4,6 +4,7 @@ Actually Ladders is a more accurate name 🤯
 
 ## 🚀 How to run this project
 Just open up the `index.html` file and enjoy!
+Or you can run a demo here: https://chakstor.github.io/stairs/ 😉
 
 ## 🤔 Game Instructions
 * Control Mario in 4 directions.
