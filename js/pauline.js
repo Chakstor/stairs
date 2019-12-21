@@ -1,4 +1,4 @@
-class Paulette {
+class Pauline {
     constructor(ctx, canvasWidth, canvasHeight, posX, posY, game) {
         this.ctx = ctx;
         this.canvasWidth = canvasWidth;
@@ -6,7 +6,7 @@ class Paulette {
         this.game = game;
 
         this.image = new Image();
-        this.image.src = "images/paulette/paulette.png";
+        this.image.src = "images/pauline/pauline.png";
 
         this.frames = 2;
         this.framesIndex = 0;
@@ -17,7 +17,7 @@ class Paulette {
         this.posY = posY - this.height;
 
         this.jailX = this.posX - 60;
-        this.jailY = this.posY + 180;
+        this.jailY = this.posY - this.height + 13;
         this.jailWidth = 150;
         this.jailHeight = 74;
     }
@@ -63,7 +63,7 @@ class Paulette {
 
         this.ctx.lineWidth = 2;
 
-        this.ctx.rect(this.jailX, this.jailY, this.jailWidth, this.jailHeight);
+        this.ctx.rect(this.jailX, this.posY - this.height + 13, this.jailWidth, this.jailHeight);
         this.ctx.strokeStyle = "#5aacc1";
         this.ctx.stroke();
 

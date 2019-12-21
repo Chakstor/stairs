@@ -131,6 +131,7 @@ class Player {
     }
 
     jump() {
+
         if (this.canClimb) return;
 
         if (this.posY > this.posYBase) {

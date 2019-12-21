@@ -1,18 +1,94 @@
+:root {
+  --corner-size: -50px;
+}
+
+html, body {
+    height: 100%;
+}
+
 body {
-    background: black;
+    background: black url(../images/decoration/bg.jpg) no-repeat center;
+    background-size: cover;
+    font-family: 'Press Start 2P', cursive;
     margin: 0;
     padding: 0;
 }
 
-.game-title {
-    background: url(../images/main-logo.png) no-repeat;
-    width: 736px;
-    height: 260px;
-    margin: 50px auto;
-    text-indent: -100%;
-    overflow-x: hidden;
+.absolutely-centered {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
 }
 
-main {
-    text-align: center;
+.game-container {
+    background: #000;
+    width: 900px;
+    height: 800px;
+}
+
+.corners-top::before,
+.corners-top::after,
+.corners-bottom::before,
+.corners-bottom::after {
+    content: '';
+    display: block;
+    background: url(../images/decoration/corner.png);
+    width: 65px;
+    height: 65px;
+    position: absolute;
+    z-index: 2;
+}
+
+.corners-top::before {
+    top: var(--corner-size);
+    left: var(--corner-size);
+}
+
+.corners-top::after {
+    top: var(--corner-size);
+    right: var(--corner-size);
+}
+
+.corners-bottom::before {
+    bottom: var(--corner-size);
+    left: var(--corner-size);
+}
+
+.corners-bottom::after {
+    bottom: var(--corner-size);
+    right: var(--corner-size);
+}
+
+.game-instructions {
+    background: url(../images/decoration/how_to_play.png) no-repeat;
+    width: 818px;
+    height: 712px;
+    position: absolute;
+    text-indent: -9999px;
+}
+
+#start-btn {
+    background: transparent url(../images/decoration/button.png) no-repeat;
+    width: 235px;
+    height: 76px;
+    border: none;
+    font: 24px 'Press Start 2P', cursive;
+    color: #fff;
+    text-transform: uppercase;
+    cursor: pointer;
+    position: absolute;
+    left: 50%;
+    bottom: -99px;
+    transform: translateX(-50%);
+    outline: none;
+    text-shadow: 2px 2px 2px black;
+}
+
+#start-btn:hover {
+    color: #fff;
+}
+
+#start-btn:active {
+    margin-top: 1px;
 }
