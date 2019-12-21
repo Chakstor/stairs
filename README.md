@@ -2,9 +2,8 @@
 A personal recreation of a NES classic, Donkey Kong. Done with HTTML and JS, using Canvas API. Ironhack's 1st module final project 👨🏻‍💻
 Actually Ladders is a more accurate name 🤯
 
-## 🚀 How to run this project
-Just open up the `index.html` file and enjoy!
-Or you can run a demo here: https://chakstor.github.io/stairs/ 😉
+## 🚀 How to run the game
+You can play it here: https://chakstor.github.io/stairs/ 😉
 
 ## 🤔 Game Instructions
 * Control Mario in 4 directions.
@@ -33,3 +32,7 @@ Move Mario around using the arrow keys
  ## ⏳ Coming soon...
 - Save user's score in localStorage.
 - Stage 2 (currently in beta).
+
+ ## 🌌 Screenshots...
+![](images/ladders1.png)
+![](images/ladders2.png)
