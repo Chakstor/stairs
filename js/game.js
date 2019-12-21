@@ -362,6 +362,8 @@ class Game {
 
         this.soundPlayer.stop(theme);
         this.soundPlayer.play(dieSound);
+
+        setTimeout(() => { retry() }, 5000);
     }
 
     playerWin() {
@@ -374,8 +376,6 @@ class Game {
 
         this.pauline.openJail();
 
-        setTimeout(() => {
-            clearInterval(this.interval);
-        }, 20);
+        setTimeout(() => { clearInterval(this.interval) }, 20);
     }
 }
